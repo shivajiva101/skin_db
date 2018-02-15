@@ -7,6 +7,8 @@ skin_db.active = {}
 skin_db.inactive = {}
 skin_db.skin = {}
 
+minetest.register_privilege("moderator_skins", "Moderator skins access")
+
 local ie = minetest.request_insecure_environment()
 
 if not ie then
