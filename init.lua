@@ -7,7 +7,8 @@ skin_db.active = {}
 skin_db.inactive = {}
 skin_db.skin = {}
 
-minetest.register_privilege("moderator_skins", "Moderator skins access")
+minetest.register_privilege("player_skins", "Access player skins")
+minetest.register_privilege("moderator_skins", "Access Moderator skins")
 
 local ie = minetest.request_insecure_environment()
 
@@ -263,7 +264,8 @@ skin_db.formspec.main = function(name)
 			table.insert(context.list, record)
 		elseif record.private == name then -- private
 			table.insert(context.list, record)
-		elseif record.admin == "false"
+		elseif not privs.player_skins
+		and record.admin == "false"
 		and record.moderator == "false"
 		and record.private == "false" then -- player
 			table.insert(context.list, record)
@@ -272,19 +274,29 @@ skin_db.formspec.main = function(name)
 
 	-- apply filtered skins
 	formspec = formspec.. "textlist[0.5,4.5;6.8,4;sel;"
-
-	for i,v in ipairs(context.list) do
-		formspec = formspec .. v.name..","
-		-- set metadata for correct index
-		if i == context.preview then
-			meta = {
-				name = v.name,
-				author = v.author,
-				license = v.license
-			}
+	if #context.list > 0 then
+		for i,v in ipairs(context.list) do
+			formspec = formspec .. v.name..","
+			-- set metadata for correct index
+			if i == context.preview then
+				meta = {
+					name = v.name,
+					author = v.author,
+					license = v.license
+				}
+			end
 		end
+	else
+		-- player doesn't have priv, set default
+		local v = skin_db.active[1]
+		formspec = formspec .. v.name..","
+		meta = {
+			name = v.name,
+			author = v.author,
+			license = v.license
+		}
 	end
-	
+
 	-- Remove unwanted final comma
 	formspec = formspec:sub(1, (formspec:len() - 1))
 	formspec = formspec..";"..context.preview..";true]"
@@ -307,7 +319,6 @@ skin_db.formspec.main = function(name)
 
 	return formspec
 end
-
 -- Management
 skin_db.formspec.admin = function(name)
 
