@@ -219,6 +219,7 @@ local function get_context(name)
 			i = 1, -- active list index
 			o = -1, -- inactive list index
 			id = 1,
+			list = {},
 			preview = 1
 		}
 		state[name] = tbl
@@ -235,6 +236,7 @@ skin_db.formspec.main = function(name)
 	local playerdata = get_player_record(name)
 	local privs = minetest.get_player_privs(name)
 	local context = get_context(name)
+	local meta
 
 	if S.invplus then
 		formspec = "size[8,8.6]"
@@ -248,37 +250,41 @@ skin_db.formspec.main = function(name)
 		formspec = formspec .. "button[6,1.9;1.5,0.5;admin;Admin]"
 	end
 	formspec = formspec .. "button[6,2.8;1.5,0.5;wear;Select]"
-	--.."label[0.5,4;Preview Skins:]"
-	.. "textlist[0.5,4.5;6.8,4;sel;"
 
-	local meta
-
+	context.list = {}
+	-- filter active skins
 	for i = 1, #skin_db.active do
-		if privs.server then
-			-- add all skins
-			formspec = formspec .. skin_db.active[i].name..","
-		elseif skin_db.active[i].moderator and privs.moderator_skins then
-			-- add if player has mod skins priv
-			formspec = formspec .. skin_db.active[i].name..","
-		elseif skin_db.active[i].private == name then
-			-- add if the private field matches the player name
-			 formspec = formspec .. skin_db.active[i].name..","
-		elseif not skin_db.active[i].admin
-		and not skin_db.active[i].moderator
-		and skin_db.active[i].private == "" then
-			-- standard player
-			formspec = formspec .. skin_db.active[i].name..","
-		end
-
-		if i == context.preview then
-			meta = {
-				name = skin_db.active[i].name,
-				author = skin_db.active[i].author,
-				license = skin_db.active[i].license
-			}
+		local record = skin_db.active[i]
+		if privs.server then -- owner
+			table.insert(context.list, record)
+		elseif privs.moderator_skins
+		and record.moderator == "true"
+		and record.private == "false" then -- hub mod
+			table.insert(context.list, record)
+		elseif record.private == name then -- private
+			table.insert(context.list, record)
+		elseif record.admin == "false"
+		and record.moderator == "false"
+		and record.private == "false" then -- player
+			table.insert(context.list, record)
 		end
 	end
 
+	-- apply filtered skins
+	formspec = formspec.. "textlist[0.5,4.5;6.8,4;sel;"
+
+	for i,v in ipairs(context.list) do
+		formspec = formspec .. v.name..","
+		-- set metadata for correct index
+		if i == context.preview then
+			meta = {
+				name = v.name,
+				author = v.author,
+				license = v.license
+			}
+		end
+	end
+	
 	-- Remove unwanted final comma
 	formspec = formspec:sub(1, (formspec:len() - 1))
 	formspec = formspec..";"..context.preview..";true]"
@@ -296,7 +302,7 @@ skin_db.formspec.main = function(name)
 		end
 	end
 
-	local preview = skin_db.active[context.preview].filename:gsub(".png", "_preview.png")
+	local preview = context.list[context.preview].filename:gsub(".png", "_preview.png")
 	formspec = formspec.."image[4,0.4;2,4.5;"..preview.."]"
 
 	return formspec
