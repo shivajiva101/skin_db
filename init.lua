@@ -691,9 +691,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 		if fields.wear then
 			-- change the players skin and save the data
-			skin_db.skin[name] = skin_db.active[context.preview] -- update cache
+			skin_db.skin[name] = context.list[context.preview] -- update cache
 			update_player_skin(player) -- change player skin
-			update_player_record(name, skin_db.active[context.preview].id) -- update record
+			update_player_record(name, context.list[context.preview].id) -- update record
 			if S.ui then
 				-- update form
 				unified_inventory.set_inventory_formspec(player, "skins")
