@@ -295,6 +295,7 @@ skin_db.formspec.main = function(name)
 			author = v.author,
 			license = v.license
 		}
+		table.insert(context.list, v)
 	end
 
 	-- Remove unwanted final comma
