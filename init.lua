@@ -295,12 +295,13 @@ skin_db.formspec.main = function(name)
 		and record.moderator == "true"
 		and record.private == "false" then -- hub mod
 			table.insert(context.list, record)
-		elseif record.name ==  then -- private
+		elseif record.private == "true" and
+		record.name == name then -- private
 			table.insert(context.list, record)
 		elseif privs.player_skins and
-    record.admin == "false" and
-    record.moderator == "false" and
-    record.private == "false" then -- player
+    	record.admin == "false" and
+    	record.moderator == "false" and
+    	record.private == "false" then -- player
 			table.insert(context.list, record)
 		end
 	end
