@@ -9,7 +9,7 @@ A minetest skin mod that uses the skins resources located at http://minetest.fen
 * supports Inventory Plus
 * supports 3D Armor
 
-## How to use:
+## How to use
 
 To activate a skin double click it, after selecting a skin in the active list you have the options to remove it by double clicking, set moderator or admin flags and assign the skin to a specific player by typing their name in the field and clicking the private checkbox.
 
@@ -27,9 +27,10 @@ to the list of trusted mods in minetest.conf:
 
     secure.trusted_mods = skin_db
 
-then move the skin_db.sqlite file into the world folder.
+then move the skin_db.sqlite file into the world folder.  
+Also see https://wiki.minetest.net/Installing_Mods for more information.
 
-## Adding skins:
+## Adding skins
 
 You need 3 files before you can import a skin.
 ```
