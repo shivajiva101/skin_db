@@ -36,7 +36,7 @@ You need 3 files before you can import a skin.
 ```
 character_<number>.png -- 64 x 32 skin image
 character_<number>_preview.png -- 16 x 32 preview image
-character_<number>.txt -- name, author, licence on seperate lines
+character_<number>.txt -- name, author, license on seperate lines
 ```
 The .png files are placed in the textures folder and the txt file in the meta folder, use the admin GUI import button. New skins appear in the inactive list and can be used immediately by adding them to the active list.
   
